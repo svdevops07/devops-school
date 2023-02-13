@@ -1,5 +1,5 @@
 ---
-- name: Making build space
+- name: Provisioning Build Server
   hosts: web
   become: yes
 
@@ -9,7 +9,7 @@
       name: git
       state: present
 
-  - name: Ensure project from repo
+  - name: Ensure project from repo (checkout?)
     git:
       repo: https://github.com/boxfuse/boxfuse-sample-java-war-hello
       dest: /tmp/boxfuse
@@ -24,7 +24,7 @@
   - name: Build project with maven
     shell: cd /tmp/boxfuse && mvn package
 
-- name: Prod for java app
+- name: Ensure Prod for java app
   hosts: db
   become: yes
 
@@ -37,8 +37,12 @@
   - name: Copy war-file from Building-host
     synchronize:
       src: /tmp/boxfuse/target/hello-1.0.war
-      dest: /var/lib/tomcat9/webapps/
-    delegate_to: "{{ web }}"
+      dest: /var/lib/tomcat9/webapps
+      #    delegate_to: "{{ groups.['web'] }}"
+      #    delegate_to: maven_srv
+    delegate_to: "{{ item }}"
+    delegate_facts: true
+    loop: "{{ groups['web'] }}"
 
   - name: Ensure tomcat9 service is restarted
     service:
