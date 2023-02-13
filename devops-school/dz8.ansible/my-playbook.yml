@@ -12,7 +12,9 @@
   - name: Ensure project from repo
     git:
       repo: https://github.com/boxfuse/boxfuse-sample-java-war-hello
-      dest: /tmp
+      dest: /tmp/boxfuse
+      clone: yes
+      update: yes
 
   - name: Ensure maven is present
     apt:
@@ -20,7 +22,7 @@
       state: present
 
   - name: Build project with maven
-    shell: cd /tmp/boxfuse-sample-java-war-hello && mvn package
+    shell: cd /tmp/boxfuse && mvn package
 
 - name: Prod for java app
   hosts: db
@@ -34,7 +36,7 @@
 
   - name: Copy war-file from Building-host
     copy:
-      src: root@172.55.0.122:/tmp/boxfuse-sample-java-war-hello/target/hello-1.0.war
+      src: root@172.55.0.153:/tmp/boxfuse/target/hello-1.0.war
       dest: /var/lib/tomcat9/webapps/
 
   - name: Ensure tomcat9 service is started
