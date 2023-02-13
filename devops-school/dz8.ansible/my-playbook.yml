@@ -1,0 +1,23 @@
+---
+- name: Making build space
+  hosts: web
+  become: yes
+
+  tasks:
+  - name: Ensure git package is present
+    apt:
+      name: git
+      state: present
+
+  - name: Ensure project from repo
+    git:
+      repo: https://github.com/boxfuse/boxfuse-sample-java-war-hello
+      dest: /tmp
+
+  - name: Ensure maven is present
+    apt:
+      name: maven
+      state: present
+
+  - name: Build project with maven
+    shell: cd /tmp/boxfuse-sample-java-war-hello && mvn package
