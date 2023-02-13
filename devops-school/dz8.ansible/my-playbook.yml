@@ -21,3 +21,24 @@
 
   - name: Build project with maven
     shell: cd /tmp/boxfuse-sample-java-war-hello && mvn package
+
+- name: Prod for java app
+  hosts: db
+  become: yes
+
+  tasks:
+  - name: Ensure tomcat9 package is present
+    apt:
+      name: tomcat9
+      state: present
+
+  - name: Copy war-file from Building-host
+    copy:
+      src: root@172.55.0.122:/tmp/boxfuse-sample-java-war-hello/target/hello-1.0.war
+      dest: /var/lib/tomcat9/webapps/
+
+  - name: Ensure tomcat9 service is started
+    service:
+      name: tomcat9
+      state: started
+     
