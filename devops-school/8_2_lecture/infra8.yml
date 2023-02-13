@@ -1,0 +1,21 @@
+---
+- name: Ensure new Page for Nginx
+  hosts: web
+  become: yes
+
+  tasks:
+  - name: Ensure nginx package is present
+    apt:
+      name: nginx
+      state: present
+
+  - name: Change line in index.html
+    lineinfile:
+      path: /var/www/index.html
+      regexp: 'Welcome to nginx!'
+      line: '<p><script> document.write(new Date().toLocaleDateString()); </script></p>'
+
+  - name: Ensure nginx service is restarted
+    service:
+      name: nginx
+      state: restarted
