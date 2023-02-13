@@ -35,12 +35,13 @@
       state: present
 
   - name: Copy war-file from Building-host
-    copy:
-      src: root@172.55.0.153:/tmp/boxfuse/target/hello-1.0.war
+    synchronize:
+      src: /tmp/boxfuse/target/hello-1.0.war
       dest: /var/lib/tomcat9/webapps/
+    delegate_to: "{{ web }}"
 
-  - name: Ensure tomcat9 service is started
+  - name: Ensure tomcat9 service is restarted
     service:
       name: tomcat9
-      state: started
+      state: restarted
      
