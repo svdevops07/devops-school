@@ -31,20 +31,9 @@ pipeline {
           }
     }
 
-    stage ('Build') {
+    stage ('Pull and Deploy') {
       steps {
-        sh 'mvn package'
-      }
-    }
-
-    stage ('Make Docker Image') {
-      steps {
-
-      }
-    }
-
-    stage ('Deploy') {
-      steps {
+        sh 'docker pull svdevops07/dz11.jenkins2:0.1'
         deploy adapters: [tomcat9(credentialsId: 'tomcat9-user', path: '', url: 'http://172.55.0.158:8080')], contextPath: 'mywebapp2', war: '**/*.war'
       }
     }
